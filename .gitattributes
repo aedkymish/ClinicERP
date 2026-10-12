@@ -1,2 +1,3 @@
 *.sh text eol=lf
-*.bat text eol=crlf
+# Stored byte-for-byte with CRLF: cmd.exe cannot find :labels in LF files, and GitHub ZIP downloads skip eol conversion
+*.bat -text

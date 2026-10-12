@@ -130,7 +130,10 @@ fi
 
 # ------------------------------------------------------------------ build and start
 info "Building and starting the containers (the first build can take several minutes)"
-"${COMPOSE[@]}" up -d --build
+if ! "${COMPOSE[@]}" up -d --build; then
+  warn "Build failed - retrying once (slow networks often time out on the first try)"
+  "${COMPOSE[@]}" up -d --build || die "docker compose failed. See the messages above."
+fi
 
 info "Waiting for the API to become ready"
 for i in $(seq 1 60); do

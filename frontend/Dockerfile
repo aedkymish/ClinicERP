@@ -1,7 +1,7 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund --fetch-retries=6 --fetch-timeout=600000
 COPY . .
 # Rewrites are resolved at build time: point /api/v1 at the compose "api" service
 ARG API_URL=http://api:8000

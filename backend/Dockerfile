@@ -3,7 +3,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 CLINIC_DATA_DIR=/data CLINIC_UP
     CLINIC_BACKUP_DIR=/data/backups CLINIC_DATABASE_URL=sqlite:////data/clinic.db
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --default-timeout=120 --retries 10 -r requirements.txt
 COPY . .
 RUN useradd -r -u 1000 clinic && mkdir -p /data && chown clinic /data
 USER clinic
