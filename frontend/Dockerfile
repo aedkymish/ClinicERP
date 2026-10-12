@@ -3,7 +3,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+# Rewrites are resolved at build time: point /api/v1 at the compose "api" service
+ARG API_URL=http://api:8000
+ENV NEXT_TELEMETRY_DISABLED=1 API_URL=${API_URL}
 RUN npm run build
 
 FROM node:20-alpine

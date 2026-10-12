@@ -2,6 +2,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +33,11 @@ class Settings(BaseSettings):
 
     max_upload_mb: int = 10
     cors_origins: list[str] = []
+
+    @field_validator("offsite_backup_dir", mode="before")
+    @classmethod
+    def _blank_is_none(cls, v):
+        return v or None  # an empty CLINIC_OFFSITE_BACKUP_DIR= means "disabled", not the current folder
 
 
 @lru_cache

@@ -1,8 +1,9 @@
-# TLS-terminating reverse proxy (NFR-03). Put the certificate at deploy/certs/fullchain.pem + privkey.pem.
+# TLS-terminating reverse proxy (NFR-03). Certificate: deploy/certs/fullchain.pem + privkey.pem.
+# The nginx image fills ${HTTPS_PORT} from the environment at start-up.
 server {
     listen 80;
     server_name _;
-    return 301 https://$host$request_uri;
+    return 301 https://$host:${HTTPS_PORT}$request_uri;
 }
 
 server {

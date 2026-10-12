@@ -32,7 +32,31 @@ npm run build && API_URL=http://127.0.0.1:8000 npm start   # or: npm run dev
 Open http://localhost:3000, sign in with the one-time password and choose your own password.
 API docs: http://localhost:8000/api/v1/docs
 
-## Production (one server)
+## Server installation (Docker)
+
+Requirements: Docker Engine + Compose plugin (Linux) or Docker Desktop (Windows / macOS).
+
+```bash
+./install.sh                     # Linux / macOS
+install.bat                      # Windows (Command Prompt or double-click)
+```
+
+The installer:
+- checks Docker;
+- creates `backend/.env` with a random session key and backup encryption key;
+- creates a self-signed TLS certificate, unless you pass `--cert`/`--key`;
+- builds and starts the containers and waits for the API;
+- creates the first administrator, printing a one-time password.
+
+Run it again after updating the code: it keeps secrets, certificates and data.
+
+Options (same for both): `--domain NAME`, `--admin NAME`, `--http-port N`, `--https-port N`,
+`--offsite PATH`, `--cert FILE --key FILE`, `--help`.
+Example: `./install.sh --domain clinic.example.com --offsite /mnt/nas/clinic-backups`
+
+**Back up `backend/.env`.** Encrypted backups cannot be restored without its `CLINIC_BACKUP_ENCRYPTION_KEY`.
+
+## Manual production setup
 
 1. `cp backend/.env.example backend/.env`, set `CLINIC_SECRET_KEY` and `CLINIC_BACKUP_ENCRYPTION_KEY`.
 2. Put the TLS certificate in `deploy/certs/fullchain.pem` and `privkey.pem`.

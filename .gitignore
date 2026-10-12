@@ -11,3 +11,4 @@ deploy/certs/
 offsite-backups/
 .DS_Store
 *.tsbuildinfo
+/.env

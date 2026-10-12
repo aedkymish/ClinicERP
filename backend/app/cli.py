@@ -4,6 +4,7 @@
     python -m app.cli create-admin NAME     # first administrator; prints a one-time password
     python -m app.cli backup                # one backup now (for OS cron instead of the built-in scheduler)
     python -m app.cli seed-demo             # demo data for a fresh test install only (SET-04)
+    python -m app.cli admin-count           # number of active administrators (used by the installers)
 """
 import argparse
 import sys
@@ -63,6 +64,13 @@ def seed_demo() -> None:
             print(line)
 
 
+def admin_count() -> None:
+    from .models import User
+
+    with SessionLocal() as db:
+        print(db.scalar(select(func.count()).select_from(User).where(User.role == "admin", User.active.is_(True))))
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="python -m app.cli")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -71,8 +79,9 @@ def main() -> None:
     ca.add_argument("username")
     sub.add_parser("backup")
     sub.add_parser("seed-demo")
+    sub.add_parser("admin-count")
     a = p.parse_args()
-    {"init": init, "backup": backup, "seed-demo": seed_demo}.get(a.cmd, lambda: create_admin(a.username))()
+    {"init": init, "backup": backup, "seed-demo": seed_demo, "admin-count": admin_count}.get(a.cmd, lambda: create_admin(a.username))()
 
 
 if __name__ == "__main__":
