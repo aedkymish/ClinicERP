@@ -1,0 +1,30 @@
+# ClinicERP v2 — one server: Nginx (TLS) → Next.js → FastAPI → SQLite (volume)
+services:
+  api:
+    build: ./backend
+    env_file: ./backend/.env
+    volumes:
+      - clinic-data:/data
+      - ${OFFSITE_BACKUP_PATH:-./offsite-backups}:/offsite
+    environment:
+      CLINIC_OFFSITE_BACKUP_DIR: /offsite
+    restart: always              # NFR-10: services restart automatically
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+  web:
+    build: ./frontend
+    environment:
+      API_URL: http://api:8000
+    depends_on: [api]
+    restart: always
+  nginx:
+    image: nginx:1.27-alpine
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    depends_on: [web]
+    restart: always
+volumes:
+  clinic-data:

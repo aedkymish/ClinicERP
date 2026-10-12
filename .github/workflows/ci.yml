@@ -1,0 +1,24 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements-dev.txt
+      # NFR-14: billing, commission and payroll must stay at or above 80 % coverage
+      - run: pytest --cov=app --cov-report=term
+      - run: pytest --cov=app.services.billing --cov=app.services.payroll --cov=app.routers.invoices --cov=app.routers.payroll --cov-fail-under=80
+  web:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

@@ -1,0 +1,13 @@
+backend/.venv/
+backend/data/
+backend/.env
+__pycache__/
+.pytest_cache/
+.coverage
+frontend/node_modules/
+frontend/.next/
+frontend/test-results/
+deploy/certs/
+offsite-backups/
+.DS_Store
+*.tsbuildinfo
